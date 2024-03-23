@@ -150,6 +150,7 @@ public class Searcher {
                     String docTitle = index.docNames.get(pe.docID);
                     double rank = index.docRanks.get(docTitle);
                     pe.incrementScore(rank * rank_w);
+
                     answer.list.add(pe);
                     // put new doc in index map , increment index
                     indexMap.put(pe.docID,i);
@@ -202,7 +203,7 @@ public class Searcher {
                     case PAGERANK:
                         return pagedRankSearch(query);
                     case COMBINATION:
-                        return combinationSearch(query,0.5,0.5);
+                        return combinationSearch(query,1,8);
                 }
            default:
                return index.getPostings(query.queryterm.get(0).term);

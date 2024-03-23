@@ -30,8 +30,8 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
        return Double.compare( other.score, score );
     }
 
-    public double calculateScore(double idf, int docLength, double weight){
-                this.score = (weight * idf * offsets.size())/docLength;
+    public double calculateScore(double idf, int docLength, double weight, double termWeight){
+                this.score = (weight * termWeight * idf * offsets.size())/docLength;
                 return this.score;
     }
     public double incrementScore(double newScore){

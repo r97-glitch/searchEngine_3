@@ -95,9 +95,9 @@ public class Searcher {
                 int docLength = index.docLengths.get(pe.docID);
                 if (indexMap.containsKey(pe.docID)) {
                     int in = indexMap.get(pe.docID); // get index of existing doc in answer list
-                    answer.get(in).incrementScore(pe.calculateScore(idf,docLength,1));
+                    answer.get(in).incrementScore(pe.calculateScore(idf,docLength,1, qt.weight));
                 }else{
-                    pe.calculateScore(idf,docLength,1);
+                    pe.calculateScore(idf,docLength,1, qt.weight);
                     answer.list.add(pe);
                     // put new doc in index map , increment index
                     indexMap.put(pe.docID,i);
@@ -144,9 +144,9 @@ public class Searcher {
                 int docLength = index.docLengths.get(pe.docID);
                 if (indexMap.containsKey(pe.docID)) {
                     int in = indexMap.get(pe.docID); // get index of existing doc in answer list
-                    answer.get(in).incrementScore(pe.calculateScore(idf,docLength,idf_w));
+                    answer.get(in).incrementScore(pe.calculateScore(idf,docLength,idf_w,qt.weight));
                 }else{
-                    pe.calculateScore(idf,docLength,idf_w);
+                    pe.calculateScore(idf,docLength,idf_w, qt.weight);
                     String docTitle = index.docNames.get(pe.docID);
                     double rank = index.docRanks.get(docTitle);
                     pe.incrementScore(rank * rank_w);
@@ -203,7 +203,7 @@ public class Searcher {
                     case PAGERANK:
                         return pagedRankSearch(query);
                     case COMBINATION:
-                        return combinationSearch(query,1,8);
+                        return combinationSearch(query,1,1);
                 }
            default:
                return index.getPostings(query.queryterm.get(0).term);

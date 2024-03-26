@@ -85,12 +85,14 @@ public class Searcher {
         // mapping docIds to their index in the answer list
         HashMap<Integer,Integer> indexMap = new HashMap<>();
         int numDocs = index.docNames.size();
-      //  System.out.println("total docs : " + numDocs);
+        //System.out.println("total docs : " + numDocs);
         for (Query.QueryTerm qt :query.queryterm ){
-
+          //  System.out.println("##############NEW TERM################");
+            //System.out.println("query term : "+qt.term);
             PostingsList pl = index.getPostings(qt.term);
-
+            //System.out.println("doc frequency of term "+qt.term+ " is "+ pl.size());
             double idf = Math.log((double) numDocs/ pl.size());
+            //System.out.println("idf of term "+qt.term+ " is "+idf);
             for (PostingsEntry pe: pl.list){
                 int docLength = index.docLengths.get(pe.docID);
                 if (indexMap.containsKey(pe.docID)) {
@@ -203,7 +205,7 @@ public class Searcher {
                     case PAGERANK:
                         return pagedRankSearch(query);
                     case COMBINATION:
-                        return combinationSearch(query,1,8);
+                        return combinationSearch(query,1,200);
                 }
            default:
                return index.getPostings(query.queryterm.get(0).term);

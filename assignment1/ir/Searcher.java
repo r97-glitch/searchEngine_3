@@ -89,21 +89,24 @@ public class Searcher {
         for (Query.QueryTerm qt :query.queryterm ){
 
             PostingsList pl = index.getPostings(qt.term);
-
-            double idf = Math.log((double) numDocs/ pl.size());
-            for (PostingsEntry pe: pl.list){
-                int docLength = index.docLengths.get(pe.docID);
-                if (indexMap.containsKey(pe.docID)) {
-                    int in = indexMap.get(pe.docID); // get index of existing doc in answer list
-                    answer.get(in).incrementScore(pe.calculateScore(idf,docLength,1, qt.weight));
-                }else{
-                    pe.calculateScore(idf,docLength,1, qt.weight);
-                    answer.list.add(pe);
-                    // put new doc in index map , increment index
-                    indexMap.put(pe.docID,i);
-                    i++;
+            //System.out.println("term before : "+qt.term);
+            if(pl != null){
+                double idf = Math.log((double) numDocs/ pl.size());
+                for (PostingsEntry pe: pl.list){
+                    int docLength = index.docLengths.get(pe.docID);
+                    if (indexMap.containsKey(pe.docID)) {
+                        int in = indexMap.get(pe.docID); // get index of existing doc in answer list
+                        answer.get(in).incrementScore(pe.calculateScore(idf,docLength,1, qt.weight));
+                    }else{
+                        pe.calculateScore(idf,docLength,1, qt.weight);
+                        answer.list.add(pe);
+                        // put new doc in index map , increment index
+                        indexMap.put(pe.docID,i);
+                        i++;
+                    }
                 }
             }
+
         }
         Collections.sort(answer.list);
         return answer;

@@ -136,10 +136,10 @@ public class Query {
                 // get relevant doc title, read its tokens and add to query
                 String file = engine.index.docNames.get(pe.docID);
                 System.out.println("file title : "+ file);
-                int tempCounter =0;
+             //   int tempCounter =0;
                 try {
                     Reader reader = new InputStreamReader( new FileInputStream(file), StandardCharsets.UTF_8 );
-                    Tokenizer tok = new Tokenizer( reader, true, false, true, "C:\\Users\\Rabi\\OneDrive\\Desktop\\assignment1\\patterns.txt" );
+                    Tokenizer tok = new Tokenizer( reader, true, false, true, "C:\\Users\\Rabi\\OneDrive\\Desktop\\searchEngine_3\\assignment1\\patterns.txt" );
                     while ( tok.hasMoreTokens() ) {
                         String token = tok.nextToken();
                         //  new term
@@ -150,14 +150,14 @@ public class Query {
                             terms.put(token,glIndex);
                             glIndex++;
                         } else {
-                            tempCounter++;
+                          //  tempCounter++;
                             // re-occuring term, increment weight
-                            if(tempCounter < 17) System.out.println("token : "+ token);
+                           // if(tempCounter < 17) System.out.println("token : "+ token);
                             int in = terms.get(token);
-                            if(tempCounter < 17) System.out.println("supposedly the token : " + queryterm.get(in).term+ " its weight : "+queryterm.get(in).weight);
+                          //  if(tempCounter < 17) System.out.println("supposedly the token : " + queryterm.get(in).term+ " its weight : "+queryterm.get(in).weight);
                             queryterm.get(in).weight= (double) queryterm.get(in).weight + relv_w;
 
-                            if(tempCounter < 17) System.out.println("new weight : "+ queryterm.get(in).weight);
+                         //   if(tempCounter < 17) System.out.println("new weight : "+ queryterm.get(in).weight);
 
                         }
                     }

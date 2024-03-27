@@ -51,26 +51,69 @@ public class KGramIndex {
      *  Get intersection of two postings lists
      */
     private List<KGramPostingsEntry> intersect(List<KGramPostingsEntry> p1, List<KGramPostingsEntry> p2) {
-        // 
-        // YOUR CODE HERE
-        //
-        return null;
+        ArrayList<KGramPostingsEntry> answer = new ArrayList<>();
+        int point1 = 0;
+        int point2 = 0;
+        if (p1 == null | p2 == null) return answer;
+        while(point1 != p1.size() && point2 != p2.size()){
+            if(p1.get(point1).tokenID == p2.get(point2).tokenID){
+                answer.add(new KGramPostingsEntry(p1.get(point1).tokenID));
+                point1++;
+                point2++;
+            } else if (p1.get(point1).tokenID < p2.get(point2).tokenID) point1++;
+            else point2++;
+        }
+        return answer;
     }
 
 
     /** Inserts all k-grams from a token into the index. */
     public void insert( String token ) {
-        //
-        // YOUR CODE HERE
-        //
+        if(term2id.containsKey(token)) return;
+        int k = getK();
+
+        // insert term and generated id in maps
+        generateTermID();
+        term2id.put(token,lastTermID);
+        id2term.put(lastTermID,token);
+
+        int termId = getIDByTerm(token);
+        // add start and end k-gram
+        String newTok = "^" + token + "$";
+        HashSet<String> kgs = new HashSet<>();
+        for (int i = 0; i <= newTok.length() - k; i++) {
+                String kg = newTok.substring(i,i+k); // k-character substring i.e k-gram
+                if(!kgs.contains(kg)){
+                    kgs.add(kg);
+                    insertKg(kg,termId);
+                }
+        }
+    }
+
+    public void insertKg(String kg, int termId){
+        KGramPostingsEntry kgp = new KGramPostingsEntry(termId);
+        if (!index.containsKey(kg)) {
+            ArrayList<KGramPostingsEntry> kList = new ArrayList<>();
+            kList.add(kgp);
+            index.put(kg,kList);
+        } else {
+            index.get(kg).add(kgp);
+        }
     }
 
     /** Get postings for the given k-gram */
     public List<KGramPostingsEntry> getPostings(String kgram) {
-        //
-        // YOUR CODE HERE
-        //
-        return null;
+        return index.getOrDefault(kgram, null);
+    }
+
+    public List<KGramPostingsEntry> getIntersection(String[] kgs){
+        List<KGramPostingsEntry> answer = new ArrayList<>();
+        answer = index.get(kgs[0]);
+        for (int i = 1; i < kgs.length; i++) {
+            answer = intersect(answer,index.get(kgs[i]));
+        }
+        //System.out.println("get intersection size : "+answer.size());
+        return answer;
     }
 
     /** Get id of a term */
@@ -128,7 +171,8 @@ public class KGramIndex {
             String token = tok.nextToken();
             kgIndex.insert(token);
         }
-
+      //  String[] in = {"th","he"};
+       // kgIndex.getIntersection(in);
         String[] kgrams = args.get("kgram").split(" ");
         List<KGramPostingsEntry> postings = null;
         for (String kgram : kgrams) {
